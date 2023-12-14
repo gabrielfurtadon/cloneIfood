@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import com.gabriel.delivery.modelo.Cliente;
 
+@TipoDoNotificador(NivelUrgencia.URGENTE)
 @Component
 public class NotificadorSMS implements Notificador {
 

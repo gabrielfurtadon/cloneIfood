@@ -17,7 +17,7 @@ public class AtivacaoClienteService {
 	
 	private static final String MSG = "Seu cadastro no sistema está ativado!";
 	
-	@TipoDoNotificador(NivelUrgencia.NORMAL)
+	@TipoDoNotificador(NivelUrgencia.URGENTE)
 	@Autowired
 	Notificador notificador;
 	
