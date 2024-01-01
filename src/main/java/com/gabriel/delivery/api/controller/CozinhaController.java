@@ -18,6 +18,7 @@ public class CozinhaController {
 	@Autowired
 	private CozinhaRepository repository;
 	
+	//teste
 	@GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 	public List<Cozinha> listar() {
 		return repository.findAll();
