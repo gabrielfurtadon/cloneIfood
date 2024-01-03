@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,8 +29,14 @@ public class CozinhaController {
 	}
 	
 	@GetMapping("/{id}")
-	public Optional<Cozinha> buscar(@PathVariable Long id) {
-		return repository.findById(id);
+	public ResponseEntity<Optional<Cozinha>> buscar(@PathVariable Long id) {
+		Optional<Cozinha> cozinha = repository.findById(id);
+		//return ResponseEntity.status(HttpStatus.OK).body(cozinha);
+		
+		HttpHeaders header = new HttpHeaders();
+		header.add(HttpHeaders.LOCATION, "http://api.delivery.local:8080/cozinhas");
+		
+		return ResponseEntity.status(HttpStatus.FOUND).headers(header).build();
 	}
 	
 }
