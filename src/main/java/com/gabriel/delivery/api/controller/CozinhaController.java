@@ -30,13 +30,14 @@ public class CozinhaController {
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<Optional<Cozinha>> buscar(@PathVariable Long id) {
+		
 		Optional<Cozinha> cozinha = repository.findById(id);
-		//return ResponseEntity.status(HttpStatus.OK).body(cozinha);
+		if(cozinha.isPresent()) {
+		return ResponseEntity.status(HttpStatus.OK).body(cozinha);
+		}
 		
-		HttpHeaders header = new HttpHeaders();
-		header.add(HttpHeaders.LOCATION, "http://api.delivery.local:8080/cozinhas");
-		
-		return ResponseEntity.status(HttpStatus.FOUND).headers(header).build();
+		return ResponseEntity.notFound().build();
+
 	}
 	
 }
