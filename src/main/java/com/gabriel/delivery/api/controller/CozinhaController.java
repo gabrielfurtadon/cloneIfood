@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gabriel.delivery.domain.model.Cozinha;
 import com.gabriel.delivery.domain.repository.CozinhaRepository;
+import com.gabriel.delivery.domain.service.CozinhaService;
 
 @RestController
 @RequestMapping("/cozinhas")
@@ -28,6 +29,8 @@ public class CozinhaController {
 	@Autowired
 	private CozinhaRepository repository;
 	
+	@Autowired
+	CozinhaService service;
 	
 	@GetMapping
 	public List<Cozinha> listar() {
@@ -49,7 +52,7 @@ public class CozinhaController {
 	@ResponseStatus(HttpStatus.CREATED)
 	public Cozinha adicionar(@RequestBody Cozinha cozinha){
 		
-		return repository.save(cozinha);
+		return service.adicionar(cozinha);
 	}
 	
 	@PutMapping("{id}")
