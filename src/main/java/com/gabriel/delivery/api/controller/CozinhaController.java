@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -18,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gabriel.delivery.domain.exception.EntidadeEmUsoException;
+import com.gabriel.delivery.domain.exception.EntidadeNaoEncontradaException;
 import com.gabriel.delivery.domain.model.Cozinha;
 import com.gabriel.delivery.domain.repository.CozinhaRepository;
 import com.gabriel.delivery.domain.service.CozinhaService;
@@ -73,22 +74,16 @@ public class CozinhaController {
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Cozinha> remover(@PathVariable Long id) {
-
 		try {
-			Optional<Cozinha> ocozinha = repository.findById(id);
+			service.remover(id);
+			return ResponseEntity.noContent().build();
 
-			if (ocozinha.isPresent()) {
-				Cozinha cozinha = ocozinha.get();
-				repository.delete(cozinha);
-
-				return ResponseEntity.noContent().build();
-			} else {
-				return ResponseEntity.notFound().build();
-			}
-		} catch (DataIntegrityViolationException error) {
+		}catch(EntidadeEmUsoException e) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).build();
+		}catch(EntidadeNaoEncontradaException e) {
+			return ResponseEntity.notFound().build();
 		}
-
+		
 	}
 	
 }
