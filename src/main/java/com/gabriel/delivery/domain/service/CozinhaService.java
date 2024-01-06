@@ -22,16 +22,16 @@ public class CozinhaService {
 		return repository.save(cozinha);
 	}
 	
+	public Cozinha atualizar(Cozinha cozinha) {
+		return repository.saveAndFlush(cozinha);
+	}
+	
 	public void remover(Long id) {
 		try {
 			Optional<Cozinha> ocozinha = repository.findById(id);
 
-			//if (ocozinha.isPresent()) {
 				Cozinha cozinha = ocozinha.get();
 				repository.delete(cozinha);
-			//} else {
-				//throw new EmptyResultDataAccessException(1);
-			//}
 		}catch(NoSuchElementException e) {
 			throw new EntidadeNaoEncontradaException(String.format("Não existe cadastro de cozinha com o código %d", id));
 		}catch (DataIntegrityViolationException error) {

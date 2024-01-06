@@ -64,7 +64,7 @@ public class CozinhaController {
 		if (optionalCozinha.isPresent()) {
 	        Cozinha cozinhaAtual = optionalCozinha.get();
 	        BeanUtils.copyProperties(cozinha, cozinhaAtual, "id");
-	        repository.saveAndFlush(cozinhaAtual);
+	        service.atualizar(cozinha);
 	        return ResponseEntity.ok(cozinhaAtual);
 	    } else {
 	        return ResponseEntity.notFound().build();
