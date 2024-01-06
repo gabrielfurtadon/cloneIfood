@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 
 import com.gabriel.delivery.domain.exception.EntidadeEmUsoException;
 import com.gabriel.delivery.domain.exception.EntidadeNaoEncontradaException;
+import com.gabriel.delivery.domain.model.Cozinha;
 import com.gabriel.delivery.domain.model.Restaurante;
+import com.gabriel.delivery.domain.repository.CozinhaRepository;
 import com.gabriel.delivery.domain.repository.RestauranteRepository;
 
 @Service
@@ -17,8 +19,21 @@ public class RestauranteService {
 
 	@Autowired
 	RestauranteRepository repository;
+	
+	@Autowired 
+	CozinhaRepository cozinhaRepository;
 
 	public Restaurante salvar(Restaurante restaurante) {
+		
+		Long cozinhaId = restaurante.getCozinha().getId();
+		Optional<Cozinha> cozinha = cozinhaRepository.findById(cozinhaId);
+		
+		if(cozinha.isEmpty()) {
+			throw new EntidadeNaoEncontradaException(String.format("Não existem cozinha com o código %d associada à esse restaurante", cozinhaId));
+		}
+		
+		restaurante.setCozinha(null);
+		
 		return repository.save(restaurante);
 	}
 	
