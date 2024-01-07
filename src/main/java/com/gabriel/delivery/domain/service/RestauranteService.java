@@ -3,6 +3,7 @@ package com.gabriel.delivery.domain.service;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -26,19 +27,32 @@ public class RestauranteService {
 	public Restaurante salvar(Restaurante restaurante) {
 		
 		Long cozinhaId = restaurante.getCozinha().getId();
-		Optional<Cozinha> cozinha = cozinhaRepository.findById(cozinhaId);
-		
-		if(cozinha.isEmpty()) {
+		Optional<Cozinha> ocozinha = cozinhaRepository.findById(cozinhaId);
+
+		if(ocozinha.isEmpty()) {
 			throw new EntidadeNaoEncontradaException(String.format("Não existem cozinha com o código %d associada à esse restaurante", cozinhaId));
 		}
 		
-		restaurante.setCozinha(null);
+		Cozinha cozinha = ocozinha.get();
+		restaurante.setCozinha(cozinha);
 		
 		return repository.save(restaurante);
 	}
 	
-	public Restaurante atualizar(Restaurante restaurante){
-		return repository.saveAndFlush(restaurante);
+	public Restaurante atualizar(Long id, Restaurante restaurante){
+			
+			Optional<Restaurante> restauranteAtual = repository.findById(id);
+			
+			if(restauranteAtual.isPresent()) {
+				Restaurante restauranteFinal = restauranteAtual.get();
+				BeanUtils.copyProperties(restaurante, restauranteFinal, "id");
+				
+				return this.salvar(restauranteFinal);
+				
+			}else {
+				throw new EntidadeNaoEncontradaException(String.format("Não existem restaurante com o código %d ", id));
+			}
+			
 	}
 	
 	public void remover(Long id) {
