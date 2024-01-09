@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import com.gabriel.delivery.domain.exception.EntidadeEmUsoException;
 import com.gabriel.delivery.domain.exception.EntidadeNaoEncontradaException;
 import com.gabriel.delivery.domain.model.Estado;
-import com.gabriel.delivery.domain.repository.CidadeRepository;
 import com.gabriel.delivery.domain.repository.EstadoRepository;
 
 @Service
@@ -20,8 +19,6 @@ public class EstadoService {
 	@Autowired
 	EstadoRepository repository;
 	
-	@Autowired
-	CidadeRepository cidadeRepository;
 	
 	public Estado salvar(Estado estado) {
 		return repository.save(estado);
