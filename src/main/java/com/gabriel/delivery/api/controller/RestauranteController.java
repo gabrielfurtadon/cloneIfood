@@ -117,6 +117,4 @@ public class RestauranteController {
 		});
 	}
 	
-	//teste
-	
 }
