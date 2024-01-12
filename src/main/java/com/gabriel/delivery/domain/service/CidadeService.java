@@ -28,13 +28,10 @@ public class CidadeService {
 	public Cidade salvar(Cidade cidade) {
 		
 		Long estadoId = cidade.getEstado().getId();
-		Optional<Estado> oestado = estadoRepository.findById(estadoId);
+		Estado estado = estadoRepository.findById(estadoId)
+				.orElseThrow(() -> new EntidadeNaoEncontradaException(String.format("Não existem estado com o código %d associada à esse restaurante", estadoId)));		
 		
-		if(oestado.isEmpty()) {
-			throw new EntidadeNaoEncontradaException(String.format("Não existem estado com o código %d associada à esse restaurante", estadoId));
-		}
-		
-		Estado estado = oestado.get();
+
 		cidade.setEstado(estado);
 		
 		return repository.save(cidade);
