@@ -62,10 +62,9 @@ public class CozinhaController {
 		Optional<Cozinha> optionalCozinha = repository.findById(id);
 		
 		if (optionalCozinha.isPresent()) {
-	        Cozinha cozinhaAtual = optionalCozinha.get();
-	        BeanUtils.copyProperties(cozinha, cozinhaAtual, "id");
-	        service.atualizar(cozinha);
-	        return ResponseEntity.ok(cozinhaAtual);
+	        BeanUtils.copyProperties(cozinha, optionalCozinha.get(), "id");
+	        Cozinha cozinhaSalva = service.atualizar(optionalCozinha.get());
+	        return ResponseEntity.ok(cozinhaSalva);
 	    } else {
 	        return ResponseEntity.notFound().build();
 	    }

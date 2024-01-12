@@ -1,7 +1,6 @@
 package com.gabriel.delivery.domain.service;
 
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -28,10 +27,7 @@ public class CozinhaService {
 	
 	public void remover(Long id) {
 		try {
-			Optional<Cozinha> ocozinha = repository.findById(id);
-
-				Cozinha cozinha = ocozinha.get();
-				repository.delete(cozinha);
+			repository.deleteById(id);
 		}catch(NoSuchElementException e) {
 			throw new EntidadeNaoEncontradaException(String.format("Não existe cadastro de cozinha com o código %d", id));
 		}catch (DataIntegrityViolationException error) {

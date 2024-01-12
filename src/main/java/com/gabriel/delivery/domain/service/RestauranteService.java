@@ -27,13 +27,10 @@ public class RestauranteService {
 	public Restaurante salvar(Restaurante restaurante) {
 		
 		Long cozinhaId = restaurante.getCozinha().getId();
-		Optional<Cozinha> ocozinha = cozinhaRepository.findById(cozinhaId);
+		Cozinha cozinha = cozinhaRepository.findById(cozinhaId)
+				.orElseThrow(() -> new EntidadeNaoEncontradaException(String.format("Não existem cozinha com o código %d associada à esse restaurante", cozinhaId)));
 
-		if(ocozinha.isEmpty()) {
-			throw new EntidadeNaoEncontradaException(String.format("Não existem cozinha com o código %d associada à esse restaurante", cozinhaId));
-		}
 		
-		Cozinha cozinha = ocozinha.get();
 		restaurante.setCozinha(cozinha);
 		
 		return repository.save(restaurante);
@@ -57,10 +54,8 @@ public class RestauranteService {
 	
 	public void remover(Long id) {
 		try {
-			Optional<Restaurante> orestaurante = repository.findById(id);
 			
-			Restaurante restaurante = orestaurante.get();
-			repository.delete(restaurante);
+			repository.deleteById(id);
 			
 		}catch(NoSuchElementException e) {
 			throw new EntidadeNaoEncontradaException(String.format("Não existe cadastro de restaurante com o código %d", id));
