@@ -1,6 +1,7 @@
 package com.gabriel.delivery.api.controller;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -115,6 +116,11 @@ public class RestauranteController {
 		ReflectionUtils.setField(field, restauranteDestino, novoValor);
 		
 		});
+	}
+	
+	@GetMapping("/porTaxa")
+	private List<Restaurante> porTaxaFrete( BigDecimal taxaMin, BigDecimal taxaMax) {
+		return repository.findByTaxaFreteBetween(taxaMin, taxaMax);
 	}
 	
 }
