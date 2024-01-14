@@ -87,7 +87,7 @@ public class CozinhaController {
 	
 	@GetMapping("/nome/{nome}")
 	public List<Cozinha> buscarPorNome(@PathVariable String nome) {
-		return repository.findByNome(nome);
+		return repository.findByNomeContaining(nome);
 	}
 	
 }
