@@ -123,4 +123,9 @@ public class RestauranteController {
 		return repository.findByTaxaFreteBetween(taxaMin, taxaMax);
 	}
 	
+	@GetMapping("/porNome/{nome}")
+	private List<Restaurante> porNome(@PathVariable String nome) {
+		return repository.consultaPorNome(nome);
+	}
+	
 }
