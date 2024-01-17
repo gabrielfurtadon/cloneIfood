@@ -12,6 +12,8 @@ import com.gabriel.delivery.domain.model.Restaurante;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
 
 @Repository
 public class RestauranteRepositoryImpl {
@@ -19,33 +21,45 @@ public class RestauranteRepositoryImpl {
 	@PersistenceContext
 	private EntityManager manager;
 	
+//	public List<Restaurante> find(String nome, BigDecimal taxaFreteMin, BigDecimal taxaFreteMax) {
+		
+//		var jpql = new StringBuilder();
+//		jpql.append("from Restaurante where 0 = 0");
+//				
+//		var parametros = new HashMap<String, Object>();
+//		
+//		if(StringUtils.hasLength(nome)) {
+//			jpql.append("and nome like :nome ");
+//			parametros.put("nome", "%" + nome + "%");
+//		}
+//		
+//		if(taxaFreteMin != null) {
+//			jpql.append("and taxaFrete >= :taxaFreteMin ");
+//			parametros.put("taxaFreteMin", "taxaFreteMin");
+//		}
+//		
+//		if(taxaFreteMax != null) {
+//			jpql.append("and taxaFrete <= :taxaFreteMax ");
+//			parametros.put("taxaFreteMax", "taxaFreteMax");
+//		}
+//		
+//		TypedQuery<Restaurante> query = manager.createQuery(jpql.toString(), Restaurante.class);
+//		
+//		parametros.forEach((chave, valor) -> query.setParameter(chave, valor));
+//		
+//		return query.getResultList();
+//		
+//	}
+	
 	public List<Restaurante> find(String nome, BigDecimal taxaFreteMin, BigDecimal taxaFreteMax) {
+	
+		CriteriaBuilder builder = manager.getCriteriaBuilder(); //fabrica para fazer consultas
 		
-		var jpql = new StringBuilder();
-		jpql.append("from Restaurante where 0 = 0");
-				
-		var parametros = new HashMap<String, Object>();
+		CriteriaQuery<Restaurante> criteria = builder.createQuery(Restaurante.class);
 		
-		if(StringUtils.hasLength(nome)) {
-			jpql.append("and nome like :nome ");
-			parametros.put("nome", "%" + nome + "%");
-		}
+		criteria.from(Restaurante.class); //mesma coisa que 'from restaurante' do jpql
 		
-		if(taxaFreteMin != null) {
-			jpql.append("and taxaFrete >= :taxaFreteMin ");
-			parametros.put("taxaFreteMin", "taxaFreteMin");
-		}
-		
-		if(taxaFreteMax != null) {
-			jpql.append("and taxaFrete <= :taxaFreteMax ");
-			parametros.put("taxaFreteMax", "taxaFreteMax");
-		}
-		
-		TypedQuery<Restaurante> query = manager.createQuery(jpql.toString(), Restaurante.class);
-		
-		parametros.forEach((chave, valor) -> query.setParameter(chave, valor));
-		
-		return query.getResultList();
+		return manager.createQuery(criteria).getResultList();
 		
 	}
 	
