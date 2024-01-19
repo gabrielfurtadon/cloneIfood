@@ -14,6 +14,10 @@ import com.gabriel.delivery.domain.repository.CozinhaRepository;
 @Service
 public class CozinhaService {
 
+	private static final String MSG_COZINHA_EM_USO = "cozinha de código %d não pode ser removida pois está em uso";
+
+	private static final String MSG_COZINHA_NAO_ENCONTRADA = "Não existe cadastro de cozinha com o código %d";
+	
 	@Autowired
 	CozinhaRepository repository;
 	
@@ -29,10 +33,16 @@ public class CozinhaService {
 		try {
 			repository.deleteById(id);
 		}catch(NoSuchElementException e) {
-			throw new EntidadeNaoEncontradaException(String.format("Não existe cadastro de cozinha com o código %d", id));
+			throw new EntidadeNaoEncontradaException(String.format(MSG_COZINHA_NAO_ENCONTRADA, id));
 		}catch (DataIntegrityViolationException error) {
-			throw new EntidadeEmUsoException(String.format("cozinha de código %d não pode ser removida pois está em uso", id));
+			throw new EntidadeEmUsoException(String.format(MSG_COZINHA_EM_USO, id));
 		}
+	}
+	
+	public Cozinha buscarOuException(Long id) {
+		return repository.findById(id)
+				.orElseThrow(() -> new EntidadeNaoEncontradaException(String.
+						format(MSG_COZINHA_NAO_ENCONTRADA, id)));
 	}
 	
 }
