@@ -1,9 +1,12 @@
 package com.gabriel.delivery.domain.repository;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.data.util.Predicates;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import com.gabriel.delivery.domain.model.Restaurante;
 
@@ -57,9 +60,22 @@ public class RestauranteRepositoryImpl {
 		CriteriaQuery<Restaurante> criteria = builder.createQuery(Restaurante.class);
 		
 		Root<Restaurante> root = criteria.from(Restaurante.class); //mesma coisa que 'from restaurante' do jpql - Root = from Restaurante
-		Predicate nomePredicate = builder.like(root.get("nome"), "%" + nome + "%");
 		
-		criteria.where(nomePredicate);
+		var predicates = new ArrayList<Predicate>();
+		
+		if(StringUtils.hasText(nome)) {
+			predicates.add(builder.like(root.get("nome"), "%" + nome + "%"));
+		}
+		
+		if(taxaFreteMin != null) {
+			predicates.add(builder.greaterThanOrEqualTo(root.get("taxaFrete"), taxaFreteMin));
+		}
+		
+		if(taxaFreteMax != null) {
+			predicates.add(builder.lessThanOrEqualTo(root.get("taxaFrete"), taxaFreteMax));
+		}
+		
+		criteria.where(predicates.toArray(new Predicate[0])); //passando a instancia de um array (posicao nao importa)
 		
 		return manager.createQuery(criteria).getResultList();
 		
