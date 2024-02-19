@@ -1,19 +1,18 @@
 package com.gabriel.delivery.domain.repository;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
 
 import com.gabriel.delivery.domain.model.Restaurante;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
 @Repository
 public class RestauranteRepositoryImpl {
@@ -57,7 +56,10 @@ public class RestauranteRepositoryImpl {
 		
 		CriteriaQuery<Restaurante> criteria = builder.createQuery(Restaurante.class);
 		
-		criteria.from(Restaurante.class); //mesma coisa que 'from restaurante' do jpql
+		Root<Restaurante> root = criteria.from(Restaurante.class); //mesma coisa que 'from restaurante' do jpql - Root = from Restaurante
+		Predicate nomePredicate = builder.like(root.get("nome"), "%" + nome + "%");
+		
+		criteria.where(nomePredicate);
 		
 		return manager.createQuery(criteria).getResultList();
 		
