@@ -25,6 +25,8 @@ import com.gabriel.delivery.domain.exception.EntidadeEmUsoException;
 import com.gabriel.delivery.domain.exception.EntidadeNaoEncontradaException;
 import com.gabriel.delivery.domain.model.Restaurante;
 import com.gabriel.delivery.domain.repository.RestauranteRepository;
+import com.gabriel.delivery.domain.repository.spec.RestauranteComFreteGratisSpec;
+import com.gabriel.delivery.domain.repository.spec.RestauranteComNomeSemelhantreSpec;
 import com.gabriel.delivery.domain.service.RestauranteService;
 
 @RestController
@@ -124,8 +126,10 @@ public class RestauranteController {
 	}
 	
 	@GetMapping("/porNome/{nome}")
-	private List<Restaurante> porNome(@PathVariable String nome) {
-		return repository.consultaPorNome(nome);
+	private List<Restaurante> porNomeEFreteGratis(@PathVariable String nome) {
+		var comFreteGratis = new RestauranteComFreteGratisSpec();
+		var comNomeSemelhante= new RestauranteComNomeSemelhantreSpec(nome);
+		return repository.findAll(comFreteGratis.and(comNomeSemelhante));
 	}
 	
 }
