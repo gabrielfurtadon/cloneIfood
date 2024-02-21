@@ -1,14 +1,18 @@
-package com.gabriel.delivery.domain.repository;
+package com.gabriel.delivery.domain.repository.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.data.util.Predicates;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import com.gabriel.delivery.domain.model.Restaurante;
+import com.gabriel.delivery.domain.repository.RestauranteRepository;
+import com.gabriel.delivery.domain.repository.querys.RestauranteRepositoryQuerys;
+import com.gabriel.delivery.domain.repository.spec.RestauranteSpecs;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -18,10 +22,13 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 
 @Repository
-public class RestauranteRepositoryImpl {
+public class RestauranteRepositoryImpl implements RestauranteRepositoryQuerys{
 
 	@PersistenceContext
 	private EntityManager manager;
+	
+	@Autowired @Lazy //SÓ INSTANCIA NO MOMENTO QUE FOR PRECISO -> EVITAR DEPENDENCIA CIRCULAR
+	public RestauranteRepository repository;
 	
 //	public List<Restaurante> find(String nome, BigDecimal taxaFreteMin, BigDecimal taxaFreteMax) {
 		
@@ -79,6 +86,12 @@ public class RestauranteRepositoryImpl {
 		
 		return manager.createQuery(criteria).getResultList();
 		
+	}
+
+	@Override
+	public List<Restaurante> findComFreteGratis(String nome) {
+		return repository.findAll(RestauranteSpecs.comFreteGratis()
+				.and(RestauranteSpecs.comNomeSemelhante(nome)));
 	}
 	
 	
