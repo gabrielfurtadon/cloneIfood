@@ -4,7 +4,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -36,6 +39,10 @@ public class Restaurante {
 	@JoinColumn(name = "cozinha_id") //DONO DA ASSOCIACAO (SO VAI TER A COLUNA NA TABELA RESTAURANTE)
 	private Cozinha cozinha;
 	
+	@Embedded //Indica que essa proprieadade e de um tipo embedabble (esta sendo incorporada)
+	private Endereco endereco;
+	
+	@JsonIgnore
 	@ManyToMany
 	@JoinTable(name = "restaurante_forma_pagamento", joinColumns = @JoinColumn(name = "restaurante_id"),
 	inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id")) //NOME DA TABELA INTERMEDIARIA QUE SERA CRIADA
