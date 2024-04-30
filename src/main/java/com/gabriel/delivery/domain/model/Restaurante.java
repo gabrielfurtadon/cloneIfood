@@ -1,8 +1,12 @@
 package com.gabriel.delivery.domain.model;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -39,8 +43,19 @@ public class Restaurante {
 	@JoinColumn(name = "cozinha_id") //DONO DA ASSOCIACAO (SO VAI TER A COLUNA NA TABELA RESTAURANTE)
 	private Cozinha cozinha;
 	
+	@JsonIgnore
 	@Embedded //Indica que essa proprieadade e de um tipo embedabble (esta sendo incorporada)
 	private Endereco endereco;
+	
+	@JsonIgnore
+	@CreationTimestamp //ATRIBUI A DATA/HORA ATUAL DO MOMENTO QUE FOR SALVA PELA PRIMEIRA VEZ
+	@Column(nullable = false, columnDefinition = "datetime")
+	private LocalDateTime  dataCadastro;//representa data hora sem fusohorario
+	
+	@JsonIgnore
+	@UpdateTimestamp //DATA HORA/HORA ATUAL SEMPRE QUE A ENTIDADE FOR ATUALIZADA
+	@Column(nullable = false, columnDefinition = "datetime")
+	private LocalDateTime  dataAtualizacao;
 	
 	@JsonIgnore
 	@ManyToMany
