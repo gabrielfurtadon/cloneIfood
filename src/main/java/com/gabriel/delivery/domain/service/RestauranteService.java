@@ -42,7 +42,7 @@ public class RestauranteService {
 			
 			if(restauranteAtual.isPresent()) {
 				Restaurante restauranteFinal = restauranteAtual.get();
-				BeanUtils.copyProperties(restaurante, restauranteFinal, "id", "formasPagamento", "endereco", "dataCadastro");
+				BeanUtils.copyProperties(restaurante, restauranteFinal, "id", "formasPagamento", "endereco", "dataCadastro", "produtos");
 				
 				return this.salvar(restauranteFinal);
 				
