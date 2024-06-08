@@ -9,7 +9,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.gabriel.delivery.domain.exception.EntidadeEmUsoException;
-import com.gabriel.delivery.domain.exception.EntidadeNaoEncontradaException;
+import com.gabriel.delivery.domain.exception.RestauranteNaoEncontradoException;
 import com.gabriel.delivery.domain.model.Cozinha;
 import com.gabriel.delivery.domain.model.Restaurante;
 import com.gabriel.delivery.domain.repository.CozinhaRepository;
@@ -28,7 +28,7 @@ public class RestauranteService {
 		
 		Long cozinhaId = restaurante.getCozinha().getId();
 		Cozinha cozinha = cozinhaRepository.findById(cozinhaId)
-				.orElseThrow(() -> new EntidadeNaoEncontradaException(String.format("Não existem cozinha com o código %d associada à esse restaurante", cozinhaId)));
+				.orElseThrow(() -> new RestauranteNaoEncontradoException(String.format("Não existem cozinha com o código %d associada à esse restaurante", cozinhaId)));
 
 		
 		restaurante.setCozinha(cozinha);
@@ -47,7 +47,7 @@ public class RestauranteService {
 				return this.salvar(restauranteFinal);
 				
 			}else {
-				throw new EntidadeNaoEncontradaException(String.format("Não existem restaurante com o código %d ", id));
+				throw new RestauranteNaoEncontradoException(String.format("Não existem restaurante com o código %d ", id));
 			}
 			
 	}
@@ -58,7 +58,7 @@ public class RestauranteService {
 			repository.deleteById(id);
 			
 		}catch(NoSuchElementException e) {
-			throw new EntidadeNaoEncontradaException(String.format("Não existe cadastro de restaurante com o código %d", id));
+			throw new RestauranteNaoEncontradoException(String.format("Não existe cadastro de restaurante com o código %d", id));
 		}catch (DataIntegrityViolationException error) {
 			throw new EntidadeEmUsoException(String.format("restaurante de código %d não pode ser removida pois está em uso", id));
 		}

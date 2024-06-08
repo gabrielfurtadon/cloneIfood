@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import com.gabriel.delivery.domain.exception.CozinhaNaoEncontradaException;
 import com.gabriel.delivery.domain.exception.EntidadeEmUsoException;
-import com.gabriel.delivery.domain.exception.EntidadeNaoEncontradaException;
 import com.gabriel.delivery.domain.model.Cozinha;
 import com.gabriel.delivery.domain.repository.CozinhaRepository;
 
@@ -33,7 +33,7 @@ public class CozinhaService {
 		try {
 			repository.deleteById(id);
 		}catch(NoSuchElementException e) {
-			throw new EntidadeNaoEncontradaException(String.format(MSG_COZINHA_NAO_ENCONTRADA, id));
+			throw new CozinhaNaoEncontradaException(String.format(MSG_COZINHA_NAO_ENCONTRADA, id));
 		}catch (DataIntegrityViolationException error) {
 			throw new EntidadeEmUsoException(String.format(MSG_COZINHA_EM_USO, id));
 		}
@@ -41,7 +41,7 @@ public class CozinhaService {
 	
 	public Cozinha buscarOuException(Long id) {
 		return repository.findById(id)
-				.orElseThrow(() -> new EntidadeNaoEncontradaException(String.
+				.orElseThrow(() -> new CozinhaNaoEncontradaException(String.
 						format(MSG_COZINHA_NAO_ENCONTRADA, id)));
 	}
 	

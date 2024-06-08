@@ -9,7 +9,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.gabriel.delivery.domain.exception.EntidadeEmUsoException;
-import com.gabriel.delivery.domain.exception.EntidadeNaoEncontradaException;
+import com.gabriel.delivery.domain.exception.EstadoNaoEncontradoException;
 import com.gabriel.delivery.domain.model.Estado;
 import com.gabriel.delivery.domain.repository.EstadoRepository;
 
@@ -34,7 +34,7 @@ public class EstadoService {
 			
 			return repository.saveAndFlush(estadoFinal);
 		}else {
-			throw new EntidadeNaoEncontradaException(String.format("Não existe estado com o código %d ", id));
+			throw new EstadoNaoEncontradoException(String.format("Não existe estado com o código %d ", id));
 		}
 		
 	}
@@ -46,7 +46,7 @@ public class EstadoService {
 		Estado estado = oestado.get();
 		repository.delete(estado);
 		}catch(NoSuchElementException e) {
-			throw new EntidadeNaoEncontradaException(String.format("Não existe cadastro de Estado com o código %d", id));
+			throw new EstadoNaoEncontradoException(String.format("Não existe cadastro de Estado com o código %d", id));
 		}catch (DataIntegrityViolationException error) {
 			throw new EntidadeEmUsoException(String.format("Estado de código %d não pode ser removido pois está em uso", id));
 		}
