@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gabriel.delivery.domain.exception.CozinhaNaoEncontradaException;
 import com.gabriel.delivery.domain.exception.EntidadeEmUsoException;
 import com.gabriel.delivery.domain.exception.EntidadeNaoEncontradaException;
 import com.gabriel.delivery.domain.model.Restaurante;
@@ -59,7 +60,7 @@ public class RestauranteController {
 	public ResponseEntity<?> adicionar(@RequestBody @Valid Restaurante restaurante) {
 		try {
 			return ResponseEntity.status(HttpStatus.CREATED).body(service.salvar(restaurante));  
-		}catch(EntidadeNaoEncontradaException e) {
+		}catch(CozinhaNaoEncontradaException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 		
@@ -69,7 +70,7 @@ public class RestauranteController {
 	public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody Restaurante restaurante){
 		try {
 			return ResponseEntity.ok().body(service.atualizar(id, restaurante));
-		}catch(EntidadeNaoEncontradaException e) {
+		}catch(CozinhaNaoEncontradaException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 		
