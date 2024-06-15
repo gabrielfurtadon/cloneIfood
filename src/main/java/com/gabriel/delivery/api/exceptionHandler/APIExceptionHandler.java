@@ -1,10 +1,10 @@
 package com.gabriel.delivery.api.exceptionHandler;
 
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.aspectj.weaver.tools.Traceable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.fasterxml.jackson.databind.JsonMappingException.Reference;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.fasterxml.jackson.databind.exc.PropertyBindingException;
 import com.gabriel.delivery.domain.exception.EntidadeEmUsoException;
 import com.gabriel.delivery.domain.exception.EntidadeNaoEncontradaException;
 import com.gabriel.delivery.domain.exception.NegocioException;
@@ -33,7 +35,9 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler{
 		
 		if(rootCause instanceof InvalidFormatException) {
 			return handleInvalidFormatException((InvalidFormatException) rootCause, headers, status, request);
-		}
+		}else if (rootCause instanceof PropertyBindingException) {
+	        return handlePropertyBindingException((PropertyBindingException) rootCause, headers, status, request); 
+	    }
 		
 		HttpStatus  statusCode = HttpStatus.NOT_FOUND;
 		ProblemType problemType = ProblemType.MESSAGE_NOT_READABLE;
@@ -47,9 +51,7 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler{
 	private ResponseEntity<Object> handleInvalidFormatException(InvalidFormatException ex,
 	HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 		
-		String path = ex.getPath().stream()
-				.map(ref -> ref.getFieldName())
-				.collect(Collectors.joining("."));
+		String path = joinPath(ex.getPath());
 		
 		ProblemType problemType = ProblemType.MESSAGE_NOT_READABLE;
 		String detail = String.format("The field '%s'has recieved value '%s', which is an invalid type."
@@ -130,7 +132,27 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler{
 				ex.getMessage()).build();
 	    
 	    return handleExceptionInternal(ex, problem, headers, status, request);
-	} 
+	}
+	
+	private ResponseEntity<Object> handlePropertyBindingException(PropertyBindingException ex,
+	        HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+
+	    String path = joinPath(ex.getPath());
+	    
+	    ProblemType problemType = ProblemType.MESSAGE_NOT_READABLE;
+	    String detail = String.format("A propriedade '%s' não existe. "
+	            + "Corrija ou remova essa propriedade e tente novamente.", path);
+
+	    Problem problem = createProblemBuilder(status, problemType, detail).build();
+	    
+	    return handleExceptionInternal(ex, problem, headers, status, request);
+	}
+	
+	private String joinPath(List<Reference> references) {
+	    return references.stream()
+	        .map(ref -> ref.getFieldName())
+	        .collect(Collectors.joining("."));
+	}
 	
 	private Problem.ProblemBuilder createProblemBuilder(HttpStatusCode status,
 			ProblemType problemType, String detail) {
