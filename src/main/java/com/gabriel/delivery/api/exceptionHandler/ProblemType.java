@@ -11,7 +11,8 @@ public enum ProblemType {
 	ENTIDADE_NAO_ENCONTRADA("/entidade-nao-encontrada", "Entidade não encontrada"),
 	ENTIDADE_EM_USO("/entidade-em-uso", "Entidade em uso"),
 	ERRO_NEGOCIO("/erro-negocio", "Violação de regra de negócio"),
-	RECURSO_NAO_ENCONTRADO("/resource-not-found", "Resource not found");
+	RECURSO_NAO_ENCONTRADO("/resource-not-found", "Resource not found"),
+	ERRO_DE_SISTEMA("/system-error", "System Error");
 	
 	private String title;
 	private String uri;
