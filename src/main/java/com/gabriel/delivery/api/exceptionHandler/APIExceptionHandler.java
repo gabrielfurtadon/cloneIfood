@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -148,13 +149,24 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler{
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 	        HttpHeaders headers, HttpStatusCode status, WebRequest request) {
 
-	    HttpStatus statusCode = (HttpStatus) status;
-	   
-	    Problem problem = createProblemBuilder(statusCode,
-				ProblemType.DADOS_INVALIDOS,
-				ex.getMessage()).build();
-	    
-	    return handleExceptionInternal(ex, problem, headers, status, request);
+		 ProblemType problemType = ProblemType.DADOS_INVALIDOS;
+		    String detail = "Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente.";
+		        
+		    BindingResult bindingResults = ex.getBindingResult(); //armazena as validacões de constrints de validacao (quais propriedades foram violadas)
+		    
+		    List<Problem.Field> problemFieds = bindingResults.getFieldErrors().stream()
+		    		.map(fieldError -> Problem.Field.builder()
+		    				.name(fieldError.getField())
+		    				.userMessage(fieldError.getDefaultMessage())
+		    				.build())
+		    		.collect(Collectors.toList());
+		    
+		    Problem problem = createProblemBuilder(status, problemType, detail)
+		        .userMessage(detail)
+		        .fields(problemFieds)
+		        .build();
+		    
+		    return handleExceptionInternal(ex, problem, headers, status, request);
 	}
 	
 	private ResponseEntity<Object> handlePropertyBindingException(PropertyBindingException ex,
@@ -184,6 +196,8 @@ public class APIExceptionHandler extends ResponseEntityExceptionHandler{
 
 	    return super.handleTypeMismatch(ex, headers, status, request);
 	}
+	
+	
 	
 	@Override
 	protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, 
