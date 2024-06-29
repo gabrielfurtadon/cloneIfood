@@ -19,6 +19,8 @@ import com.gabriel.delivery.domain.model.Cozinha;
 import com.gabriel.delivery.domain.repository.CozinhaRepository;
 import com.gabriel.delivery.domain.service.CozinhaService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/cozinhas")
 public class CozinhaController {
@@ -42,7 +44,7 @@ public class CozinhaController {
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Cozinha adicionar(@RequestBody Cozinha cozinha){
+	public Cozinha adicionar(@RequestBody @Valid Cozinha cozinha){
 		
 		return service.adicionar(cozinha);
 	}
