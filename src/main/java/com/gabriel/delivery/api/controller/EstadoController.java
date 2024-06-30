@@ -21,6 +21,8 @@ import com.gabriel.delivery.domain.model.Estado;
 import com.gabriel.delivery.domain.repository.EstadoRepository;
 import com.gabriel.delivery.domain.service.EstadoService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/estados")
 public class EstadoController {
@@ -52,7 +54,7 @@ public class EstadoController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<?> criar(@RequestBody Estado estado) {
+	public ResponseEntity<?> criar(@RequestBody @Valid Estado estado) {
 		try{
 			return  ResponseEntity.status(HttpStatus.CREATED).body(service.salvar(estado));
 		}catch(EntidadeNaoEncontradaException e) {
@@ -61,7 +63,7 @@ public class EstadoController {
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody Estado estado) {
+	public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody @Valid Estado estado) {
 		
 		try {
 			return  ResponseEntity.ok().body(service.atualizar(id, estado));

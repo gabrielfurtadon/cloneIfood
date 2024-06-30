@@ -26,6 +26,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.groups.ConvertGroup;
+import jakarta.validation.groups.Default;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -39,17 +41,18 @@ public class Restaurante {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@NotBlank(groups = Groups.CadastroRestaurante.class)
+	@NotBlank
 	@Column(nullable = false)
 	private String nome;
 	
-	@PositiveOrZero(groups = Groups.CadastroRestaurante.class)
+	@PositiveOrZero
 	@Column(name = "taxa_frete", nullable = false)
 	private BigDecimal taxaFrete;
 
 	//@JsonIgnoreProperties("hibernateLazyInitializer")
 	@Valid
-	@NotNull(groups = Groups.CadastroRestaurante.class)
+	@ConvertGroup(from = Default.class, to = Groups.CozinhaId.class)
+	@NotNull
 	@ManyToOne //(fetch = FetchType.LAZY)
 	@JoinColumn(name = "cozinha_id") //DONO DA ASSOCIACAO (SO VAI TER A COLUNA NA TABELA RESTAURANTE)
 	private Cozinha cozinha;

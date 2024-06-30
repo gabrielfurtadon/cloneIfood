@@ -21,6 +21,8 @@ import com.gabriel.delivery.domain.model.Cidade;
 import com.gabriel.delivery.domain.repository.CidadeRepository;
 import com.gabriel.delivery.domain.service.CidadeService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/cidades")
 public class CidadeController {
@@ -53,7 +55,7 @@ public class CidadeController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<?> criar(@RequestBody Cidade cidade) {
+	public ResponseEntity<?> criar(@RequestBody @Valid Cidade cidade) {
 		try{
 			return  ResponseEntity.status(HttpStatus.CREATED).body(service.salvar(cidade));
 		}catch(EntidadeNaoEncontradaException e) {
@@ -62,7 +64,7 @@ public class CidadeController {
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody Cidade cidade) {
+	public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody @Valid Cidade cidade) {
 		
 		try {
 			return  ResponseEntity.ok().body(service.atualizar(id, cidade));
