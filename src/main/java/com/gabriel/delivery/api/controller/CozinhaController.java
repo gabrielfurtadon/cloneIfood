@@ -50,7 +50,7 @@ public class CozinhaController {
 	}
 	
 	@PutMapping("{id}")
-	public Cozinha atualizar(@PathVariable Long id, @RequestBody Cozinha cozinha) {
+	public Cozinha atualizar(@PathVariable Long id, @RequestBody @Valid Cozinha cozinha) {
 		
 		Cozinha cozinhaAtual = service.buscarOuException(id);
 		
