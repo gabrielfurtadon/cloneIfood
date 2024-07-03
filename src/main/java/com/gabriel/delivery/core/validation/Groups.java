@@ -1,4 +1,4 @@
-package com.gabriel.delivery;
+package com.gabriel.delivery.core.validation;
 
 public interface Groups {
 

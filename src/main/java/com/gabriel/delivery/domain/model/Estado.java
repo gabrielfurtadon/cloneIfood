@@ -1,6 +1,6 @@
 package com.gabriel.delivery.domain.model;
 
-import com.gabriel.delivery.Groups;
+import com.gabriel.delivery.core.validation.Groups;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonRootName;
-import com.gabriel.delivery.Groups;
+import com.gabriel.delivery.core.validation.Groups;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
