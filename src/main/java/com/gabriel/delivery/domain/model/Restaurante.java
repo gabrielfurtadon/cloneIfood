@@ -10,7 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gabriel.delivery.core.validation.Groups;
-import com.gabriel.delivery.core.validation.TaxFrete;
+import com.gabriel.delivery.core.validation.Multiplo;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -26,7 +26,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.groups.ConvertGroup;
 import jakarta.validation.groups.Default;
 import lombok.Data;
@@ -48,7 +47,8 @@ public class Restaurante {
 	
 	@NotNull 
 	//@PositiveOrZero
-	@TaxFrete
+	//@TaxFrete
+	@Multiplo(numero = 5)
 	@Column(name = "taxa_frete", nullable = false)
 	private BigDecimal taxaFrete;
 
