@@ -10,6 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gabriel.delivery.core.validation.Groups;
+import com.gabriel.delivery.core.validation.TaxFrete;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -46,7 +47,8 @@ public class Restaurante {
 	private String nome;
 	
 	@NotNull 
-	@PositiveOrZero
+	//@PositiveOrZero
+	@TaxFrete
 	@Column(name = "taxa_frete", nullable = false)
 	private BigDecimal taxaFrete;
 
