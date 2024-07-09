@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gabriel.delivery.core.validation.ValidacaoException;
 import com.gabriel.delivery.domain.exception.CozinhaNaoEncontradaException;
 import com.gabriel.delivery.domain.exception.EntidadeEmUsoException;
 import com.gabriel.delivery.domain.exception.EntidadeNaoEncontradaException;
@@ -38,10 +41,13 @@ import jakarta.validation.Valid;
 public class RestauranteController {
 
 	@Autowired
-	RestauranteRepository repository;
+	private RestauranteRepository repository;
 	
 	@Autowired
-	RestauranteService service;
+	private RestauranteService service;
+	
+	@Autowired
+	private SmartValidator validator;
 	
 	@GetMapping
 	public List<Restaurante> listar() {
@@ -105,8 +111,19 @@ public class RestauranteController {
 		
 		merge(campos, restauranteAtual);
 		
+		validate(restauranteAtual, "restaurante");
+		
 		return atualizar(id, restauranteAtual);
 		
+	}
+
+	private void validate(Restaurante restauranteAtual, String objectName) {
+		BeanPropertyBindingResult bindingResults = new BeanPropertyBindingResult(restauranteAtual, objectName);
+		validator.validate(restauranteAtual, null);
+		
+		if(bindingResults.hasErrors()) {
+			throw new ValidacaoException(bindingResults);
+		}
 	}
 
 	@SuppressWarnings("deprecation")
