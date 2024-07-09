@@ -11,6 +11,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gabriel.delivery.core.validation.Groups;
 import com.gabriel.delivery.core.validation.Multiplo;
+import com.gabriel.delivery.core.validation.ValorZeroIncluiDescricao;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -31,6 +32,7 @@ import jakarta.validation.groups.Default;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+@ValorZeroIncluiDescricao(valueField = "taxaFrete", descriptionField = "nome", mandatoryDescription = "Frete Gratis")
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
