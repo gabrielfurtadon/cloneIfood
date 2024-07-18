@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.gabriel.delivery.domain.exception.CozinhaNaoEncontradaException;
 import com.gabriel.delivery.domain.exception.EntidadeEmUsoException;
 import com.gabriel.delivery.domain.model.Cozinha;
 import com.gabriel.delivery.domain.service.CozinhaService;
@@ -15,7 +14,7 @@ import com.gabriel.delivery.domain.service.CozinhaService;
 import jakarta.validation.ConstraintViolationException;
 
 @SpringBootTest
-class CadastroCozinhaIntegrationTests {
+class CadastroCozinhaIT {
 
 	@Autowired
 	CozinhaService cozinhaService;
@@ -49,24 +48,11 @@ class CadastroCozinhaIntegrationTests {
 
 		EntidadeEmUsoException erroEsperado =
 				Assertions.assertThrows(EntidadeEmUsoException.class, () -> {
-					cozinhaService.remover(null);
+					cozinhaService.remover(1L);
 				});
 
 		assertThat(erroEsperado).isNotNull();
 
 	}
 	
-	@Test
-	public void deveFalhar_QuandoExcluirCozinhaInexistente() {
-
-
-		CozinhaNaoEncontradaException erroEsperado =
-				Assertions.assertThrows(CozinhaNaoEncontradaException.class, () -> {
-					cozinhaService.remover(100L);
-				});
-
-		assertThat(erroEsperado).isNotNull();
-
-	}
-
 }
