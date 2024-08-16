@@ -15,6 +15,8 @@ import com.gabriel.delivery.domain.model.Estado;
 import com.gabriel.delivery.domain.repository.CidadeRepository;
 import com.gabriel.delivery.domain.repository.EstadoRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class CidadeService {
 
@@ -24,7 +26,7 @@ public class CidadeService {
 	@Autowired
 	EstadoRepository estadoRepository;
 	
-	
+	@Transactional
 	public Cidade salvar(Cidade cidade) {
 		
 		Long estadoId = cidade.getEstado().getId();
@@ -37,6 +39,7 @@ public class CidadeService {
 		return repository.save(cidade);
 	}
 	
+	@Transactional
 	public Cidade atualizar(Long id, Cidade cidade) {
 		
 		Optional<Cidade> ocidade = repository.findById(id);
@@ -52,6 +55,7 @@ public class CidadeService {
 		
 	}
 	
+	@Transactional
 	public void excluir(Long id) {
 		try {
 		Optional<Cidade> ocidade = repository.findById(id);

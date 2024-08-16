@@ -11,6 +11,8 @@ import com.gabriel.delivery.domain.exception.EntidadeEmUsoException;
 import com.gabriel.delivery.domain.model.Cozinha;
 import com.gabriel.delivery.domain.repository.CozinhaRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class CozinhaService {
 
@@ -21,14 +23,17 @@ public class CozinhaService {
 	@Autowired
 	CozinhaRepository repository;
 	
+	@Transactional
 	public Cozinha adicionar(Cozinha cozinha) {
 		return repository.save(cozinha);
 	}
 	
+	@Transactional
 	public Cozinha atualizar(Cozinha cozinha) {
 		return repository.saveAndFlush(cozinha);
 	}
 	
+	@Transactional
 	public void remover(Long id) {
 		try {
 			repository.deleteById(id);

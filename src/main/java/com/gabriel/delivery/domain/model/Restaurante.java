@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.gabriel.delivery.core.validation.Groups;
 import com.gabriel.delivery.core.validation.Multiplo;
 import com.gabriel.delivery.core.validation.ValorZeroIncluiDescricao;
@@ -54,6 +55,7 @@ public class Restaurante {
 	@Column(name = "taxa_frete", nullable = false)
 	private BigDecimal taxaFrete;
 
+	@JsonIgnoreProperties(value = "nome", allowGetters = true)
 	//@JsonIgnoreProperties("hibernateLazyInitializer")
 	@Valid
 	@ConvertGroup(from = Default.class, to = Groups.CozinhaId.class)

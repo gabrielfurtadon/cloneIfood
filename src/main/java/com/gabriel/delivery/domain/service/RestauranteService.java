@@ -15,6 +15,8 @@ import com.gabriel.delivery.domain.model.Restaurante;
 import com.gabriel.delivery.domain.repository.CozinhaRepository;
 import com.gabriel.delivery.domain.repository.RestauranteRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class RestauranteService {
 
@@ -24,6 +26,7 @@ public class RestauranteService {
 	@Autowired 
 	CozinhaRepository cozinhaRepository;
 
+	@Transactional
 	public Restaurante salvar(Restaurante restaurante) {
 		
 		Long cozinhaId = restaurante.getCozinha().getId();
@@ -36,6 +39,7 @@ public class RestauranteService {
 		return repository.save(restaurante);
 	}
 	
+	@Transactional
 	public Restaurante atualizar(Long id, Restaurante restaurante){
 			
 			Optional<Restaurante> restauranteAtual = repository.findById(id);
@@ -52,6 +56,7 @@ public class RestauranteService {
 			
 	}
 	
+	@Transactional
 	public void remover(Long id) {
 		try {
 			
