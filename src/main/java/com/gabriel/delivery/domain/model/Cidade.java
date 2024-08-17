@@ -1,5 +1,6 @@
 package com.gabriel.delivery.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.gabriel.delivery.core.validation.Groups;
 
 import jakarta.persistence.Column;
@@ -31,6 +32,7 @@ public class Cidade {
 	@Column(nullable = false)
 	private String nome;
 	
+	@JsonIgnoreProperties(value = "nome", allowGetters = true)
 	@Valid
 	@ConvertGroup(from = Default.class, to = Groups.EstadoId.class)
 	@NotNull

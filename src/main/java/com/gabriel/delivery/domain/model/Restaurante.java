@@ -1,7 +1,7 @@
 package com.gabriel.delivery.domain.model;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,12 +71,12 @@ public class Restaurante {
 	@JsonIgnore
 	@CreationTimestamp //ATRIBUI A DATA/HORA ATUAL DO MOMENTO QUE FOR SALVA PELA PRIMEIRA VEZ
 	@Column(nullable = false, columnDefinition = "datetime")
-	private LocalDateTime  dataCadastro;//representa data hora sem fusohorario
+	private OffsetDateTime  dataCadastro;//representa data hora sem fusohorario
 	
 	@JsonIgnore
 	@UpdateTimestamp //DATA HORA/HORA ATUAL SEMPRE QUE A ENTIDADE FOR ATUALIZADA
 	@Column(nullable = false, columnDefinition = "datetime")
-	private LocalDateTime  dataAtualizacao;
+	private OffsetDateTime  dataAtualizacao;
 	
 	@JsonIgnore
 	@ManyToMany
