@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gabriel.delivery.api.CozinhaDTO;
+import com.gabriel.delivery.api.RestauranteDTO;
 import com.gabriel.delivery.core.validation.ValidacaoException;
 import com.gabriel.delivery.domain.exception.CozinhaNaoEncontradaException;
 import com.gabriel.delivery.domain.exception.EntidadeEmUsoException;
@@ -50,25 +53,22 @@ public class RestauranteController {
 	private SmartValidator validator;
 	
 	@GetMapping
-	public List<Restaurante> listar() {
-		return repository.findAll();
+	public List<RestauranteDTO> listar() {
+		return toCollectionModel(repository.findAll());
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<Optional<Restaurante>> buscar(@PathVariable Long id){
+	public RestauranteDTO buscar(@PathVariable Long id){
+		Restaurante restaurante = service.buscarOuException(id);
 		
-		Optional<Restaurante> cozinha = repository.findById(id);
-		if(cozinha.isPresent()) {
-			return ResponseEntity.ok().body(cozinha);
-		}else {
-			return ResponseEntity.notFound().build();
-		}
+		return toModel(restaurante);
 	}
+
 	
 	@PostMapping
 	public ResponseEntity<?> adicionar(@RequestBody @Valid Restaurante restaurante) {
 		try {
-			return ResponseEntity.status(HttpStatus.CREATED).body(service.salvar(restaurante));  
+			return ResponseEntity.status(HttpStatus.CREATED).body(toModel(service.salvar(restaurante)));  
 		}catch(CozinhaNaoEncontradaException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
@@ -78,12 +78,10 @@ public class RestauranteController {
 	@PutMapping("/{id}")
 	public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody @Valid Restaurante restaurante){
 		try {
-			return ResponseEntity.ok().body(service.atualizar(id, restaurante));
+			return ResponseEntity.ok().body(toModel(service.atualizar(id, restaurante)));
 		}catch(CozinhaNaoEncontradaException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
-		
-		
 	}
 	
 	@DeleteMapping("/{id}")
@@ -117,6 +115,17 @@ public class RestauranteController {
 		
 	}
 
+	
+	@GetMapping("/porTaxa")
+	private List<Restaurante> porTaxaFrete( BigDecimal taxaMin, BigDecimal taxaMax) {
+		return repository.findByTaxaFreteBetween(taxaMin, taxaMax);
+	}
+	
+	@GetMapping("/porNome/{nome}")
+	private List<Restaurante> porNomeEFreteGratis(@PathVariable String nome) {
+		return repository.findComFreteGratis(nome);
+	}
+	
 	private void validate(Restaurante restauranteAtual, String objectName) {
 		BeanPropertyBindingResult bindingResults = new BeanPropertyBindingResult(restauranteAtual, objectName);
 		validator.validate(restauranteAtual, null);
@@ -124,7 +133,7 @@ public class RestauranteController {
 		if(bindingResults.hasErrors()) {
 			throw new ValidacaoException(bindingResults);
 		}
-	}
+	}	
 
 	@SuppressWarnings("deprecation")
 	private void merge(Map<String, Object> camposOrigem, Restaurante restauranteDestino) {
@@ -149,14 +158,21 @@ public class RestauranteController {
 		}
 	}
 	
-	@GetMapping("/porTaxa")
-	private List<Restaurante> porTaxaFrete( BigDecimal taxaMin, BigDecimal taxaMax) {
-		return repository.findByTaxaFreteBetween(taxaMin, taxaMax);
+	private List<RestauranteDTO> toCollectionModel(List<Restaurante> restaurantes){
+		return restaurantes.stream().map(restaurante -> toModel(restaurante)).collect(Collectors.toList());
 	}
 	
-	@GetMapping("/porNome/{nome}")
-	private List<Restaurante> porNomeEFreteGratis(@PathVariable String nome) {
-		return repository.findComFreteGratis(nome);
+	private RestauranteDTO toModel(Restaurante restaurante) {
+		RestauranteDTO restDTO = new RestauranteDTO();
+		CozinhaDTO cozinhaDTO = new CozinhaDTO();
+		cozinhaDTO.setId(restaurante.getCozinha().getId());
+		cozinhaDTO.setNome(restaurante.getCozinha().getNome());
+		
+		restDTO.setId(restaurante.getId());
+		restDTO.setNome(restaurante.getNome());
+		restDTO.setTaxaFrete(restaurante.getTaxaFrete());
+		restDTO.setCozinhaDto(cozinhaDTO);
+		return restDTO;
 	}
 	
 }

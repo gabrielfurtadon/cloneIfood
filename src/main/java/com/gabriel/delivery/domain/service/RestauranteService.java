@@ -20,6 +20,8 @@ import jakarta.transaction.Transactional;
 @Service
 public class RestauranteService {
 
+	private static final String MSG_RESTAURANTE_NAO_ENCONTRADA = "Não existe cadastro de restaurante com o código %d";
+	
 	@Autowired
 	RestauranteRepository repository;
 	
@@ -67,6 +69,12 @@ public class RestauranteService {
 		}catch (DataIntegrityViolationException error) {
 			throw new EntidadeEmUsoException(String.format("restaurante de código %d não pode ser removida pois está em uso", id));
 		}
+	}
+	
+	public Restaurante buscarOuException(Long id) {
+		return repository.findById(id)
+				.orElseThrow(() -> new RestauranteNaoEncontradoException(String.
+						format(MSG_RESTAURANTE_NAO_ENCONTRADA, id)));
 	}
 	
 }
