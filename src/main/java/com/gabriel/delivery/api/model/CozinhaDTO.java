@@ -1,4 +1,4 @@
-package com.gabriel.delivery.api;
+package com.gabriel.delivery.api.model;
 
 import lombok.Data;
 
