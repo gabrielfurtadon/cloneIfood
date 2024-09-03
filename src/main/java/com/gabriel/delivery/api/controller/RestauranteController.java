@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gabriel.delivery.api.assembler.RestauranteDTOAssembler;
+import com.gabriel.delivery.api.assembler.RestaurantDTOAssembler;
 import com.gabriel.delivery.api.assembler.RestauranteInputDisassembler;
 import com.gabriel.delivery.api.model.RestauranteDTO;
 import com.gabriel.delivery.api.model.input.RestauranteInputDTO;
@@ -45,7 +45,7 @@ import jakarta.validation.Valid;
 public class RestauranteController {
 
 	@Autowired
-	private RestauranteDTOAssembler restauranteDTOAssembler;
+	private RestaurantDTOAssembler restauranteDTOAssembler;
 	
 	@Autowired
 	private RestauranteInputDisassembler restauranteInputDisassembler;   
