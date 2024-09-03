@@ -27,13 +27,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabriel.delivery.api.assembler.RestauranteDTOAssembler;
+import com.gabriel.delivery.api.assembler.RestauranteInputDisassembler;
 import com.gabriel.delivery.api.model.RestauranteDTO;
 import com.gabriel.delivery.api.model.input.RestauranteInputDTO;
 import com.gabriel.delivery.core.validation.ValidacaoException;
 import com.gabriel.delivery.domain.exception.CozinhaNaoEncontradaException;
 import com.gabriel.delivery.domain.exception.EntidadeEmUsoException;
 import com.gabriel.delivery.domain.exception.EntidadeNaoEncontradaException;
-import com.gabriel.delivery.domain.model.Cozinha;
 import com.gabriel.delivery.domain.model.Restaurante;
 import com.gabriel.delivery.domain.repository.RestauranteRepository;
 import com.gabriel.delivery.domain.service.RestauranteService;
@@ -46,6 +46,9 @@ public class RestauranteController {
 
 	@Autowired
 	private RestauranteDTOAssembler restauranteDTOAssembler;
+	
+	@Autowired
+	private RestauranteInputDisassembler restauranteInputDisassembler;   
 	
 	@Autowired
 	private RestauranteRepository repository;
@@ -72,7 +75,7 @@ public class RestauranteController {
 	@PostMapping
 	public ResponseEntity<?> adicionar(@RequestBody @Valid RestauranteInputDTO restauranteInput) {
 		try {
-			Restaurante restaurante = toDomainObject(restauranteInput);
+			Restaurante restaurante = restauranteInputDisassembler.toDomainObject(restauranteInput);
 			
 			return ResponseEntity.status(HttpStatus.CREATED).body(restauranteDTOAssembler.toModel(service.salvar(restaurante)));  
 		}catch(CozinhaNaoEncontradaException e) {
@@ -162,19 +165,6 @@ public class RestauranteController {
 			Throwable rootCause = ExceptionUtils.getRootCause(e);
 			throw new HttpMessageNotReadableException(e.getMessage(), rootCause);
 		}
-	}
-	
-	
-	private Restaurante toDomainObject(RestauranteInputDTO restauranteInputDTO){
-		Restaurante restaurante = new Restaurante();
-		Cozinha cozinha = new Cozinha();
-		
-		restaurante.setNome(restauranteInputDTO.getNome());
-		restaurante.setTaxaFrete(restauranteInputDTO.getTaxaFrete());
-		cozinha.setId(restauranteInputDTO.getCozinhaDto().getId());
-		restaurante.setCozinha(cozinha);
-		
-		return restaurante;
 	}
 	
 }
