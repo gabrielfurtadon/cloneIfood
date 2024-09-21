@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import com.gabriel.delivery.api.assembler.RestauranteInputDisassembler;
 import com.gabriel.delivery.domain.exception.EntidadeEmUsoException;
 import com.gabriel.delivery.domain.exception.RestauranteNaoEncontradoException;
 import com.gabriel.delivery.domain.model.Cozinha;
@@ -21,6 +22,9 @@ import jakarta.transaction.Transactional;
 public class RestauranteService {
 
 	private static final String MSG_RESTAURANTE_NAO_ENCONTRADA = "Não existe cadastro de restaurante com o código %d";
+	
+	@Autowired
+	RestauranteInputDisassembler restauranteInputDisassembler;
 	
 	@Autowired
 	RestauranteRepository repository;
@@ -48,6 +52,7 @@ public class RestauranteService {
 			
 			if(restauranteAtual.isPresent()) {
 				Restaurante restauranteFinal = restauranteAtual.get();
+				//restauranteInputDisassembler.copyToDomainObject(null, restaurante);
 				BeanUtils.copyProperties(restaurante, restauranteFinal, "id", "formasPagamento", "endereco", "dataCadastro", "produtos");
 				
 				return this.salvar(restauranteFinal);

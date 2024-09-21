@@ -5,10 +5,12 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.gabriel.delivery.api.model.RestauranteDTO;
 import com.gabriel.delivery.domain.model.Restaurante;
 
+@Component
 public class RestaurantDTOAssembler {
 	
 	@Autowired

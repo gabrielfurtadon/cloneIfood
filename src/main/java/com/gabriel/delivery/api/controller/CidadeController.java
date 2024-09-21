@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gabriel.delivery.api.assembler.CidadeDTOAssembler;
+import com.gabriel.delivery.api.assembler.CidadeInputDTODisassembler;
+import com.gabriel.delivery.api.model.CidadeDTO;
+import com.gabriel.delivery.api.model.input.CidadeInputDTO;
 import com.gabriel.delivery.domain.exception.EntidadeEmUsoException;
 import com.gabriel.delivery.domain.exception.EntidadeNaoEncontradaException;
 import com.gabriel.delivery.domain.model.Cidade;
@@ -33,20 +37,28 @@ public class CidadeController {
 	@Autowired
 	CidadeService service;
 	
+	@Autowired
+	private CidadeDTOAssembler cidadeModelAssembler;
+
+	@Autowired
+	private CidadeInputDTODisassembler cidadeInputDisassembler; 
+	
 	
 	@GetMapping
-	public List<Cidade> listar() {
-		return repository.findAll();
+	public List<CidadeDTO> listar() {
+		List<Cidade> todasCidades = repository.findAll();
+	    
+	    return cidadeModelAssembler.toCollectionModel(todasCidades);
 		}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<Cidade> buscar(@PathVariable Long id) {
+	public ResponseEntity<CidadeDTO> buscar(@PathVariable Long id) {
 		
 		Optional<Cidade> ocidade = repository.findById(id);
 		
 		if(ocidade.isPresent()) {
 			Cidade cidade = ocidade.get();
-			return ResponseEntity.ok().body(cidade);
+			return ResponseEntity.ok().body(cidadeModelAssembler.toModel(cidade));
 		}else {
 			return ResponseEntity.notFound().build();
 		}
@@ -55,9 +67,13 @@ public class CidadeController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<?> criar(@RequestBody @Valid Cidade cidade) {
+	public ResponseEntity<?> criar(@RequestBody @Valid CidadeInputDTO cidadeInput) {
 		try{
-			return  ResponseEntity.status(HttpStatus.CREATED).body(service.salvar(cidade));
+			Cidade cidade = cidadeInputDisassembler.toDomainObject(cidadeInput);
+	        
+	        cidade = service.salvar(cidade);
+	        
+			return  ResponseEntity.status(HttpStatus.CREATED).body(cidadeModelAssembler.toModel(cidade));
 		}catch(EntidadeNaoEncontradaException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}

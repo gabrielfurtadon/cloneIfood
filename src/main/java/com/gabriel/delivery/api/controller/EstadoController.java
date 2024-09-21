@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gabriel.delivery.api.assembler.EstadoDTOAssembler;
+import com.gabriel.delivery.api.assembler.EstadoInputDTODisassembler;
+import com.gabriel.delivery.api.model.EstadoDTO;
+import com.gabriel.delivery.api.model.input.EstadoInputDTO;
 import com.gabriel.delivery.domain.exception.EntidadeEmUsoException;
 import com.gabriel.delivery.domain.exception.EntidadeNaoEncontradaException;
 import com.gabriel.delivery.domain.model.Estado;
@@ -33,19 +37,28 @@ public class EstadoController {
 	@Autowired
 	EstadoService service;
 	
+	@Autowired
+	private EstadoDTOAssembler estadoDTOAssembler;
+
+	@Autowired
+	private EstadoInputDTODisassembler estadoInputDTODisassembler;
+	
 	@GetMapping
-	public List<Estado> listar() {
-		return repository.findAll();
+	public List<EstadoDTO> listar() {
+	    List<Estado> todosEstados = repository.findAll();
+	    
+	    return estadoDTOAssembler.toCollectionModel(todosEstados);
 		}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<Estado> buscar(@PathVariable Long id) {
+	public ResponseEntity<EstadoDTO> buscar(@PathVariable Long id) {
 		
 		Optional<Estado> oestado = repository.findById(id);
 		
 		if(oestado.isPresent()) {
 			Estado estado = oestado.get();
-			return ResponseEntity.ok().body(estado);
+			
+			return ResponseEntity.ok().body(estadoDTOAssembler.toModel(estado));
 		}else {
 			return ResponseEntity.notFound().build();
 		}
@@ -54,9 +67,14 @@ public class EstadoController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<?> criar(@RequestBody @Valid Estado estado) {
+	public ResponseEntity<?> criar(@RequestBody @Valid EstadoInputDTO estadoInput) {
 		try{
-			return  ResponseEntity.status(HttpStatus.CREATED).body(service.salvar(estado));
+			
+		    Estado estado = estadoInputDTODisassembler.toDomainObject(estadoInput);
+		    
+		    estado = service.salvar(estado);
+		    
+			return  ResponseEntity.status(HttpStatus.CREATED).body(estadoDTOAssembler.toModel(estado));
 		}catch(EntidadeNaoEncontradaException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
