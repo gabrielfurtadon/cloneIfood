@@ -41,10 +41,8 @@ public class EstadoService {
 	
 	public void excluir(Long id) {
 		try {
-		Optional<Estado> oestado = repository.findById(id);
-		
-		Estado estado = oestado.get();
-		repository.delete(estado);
+			repository.deleteById(id);
+			repository.flush();
 		}catch(NoSuchElementException e) {
 			throw new EstadoNaoEncontradoException(String.format("Não existe cadastro de Estado com o código %d", id));
 		}catch (DataIntegrityViolationException error) {

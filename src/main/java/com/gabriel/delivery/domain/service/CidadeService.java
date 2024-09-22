@@ -58,10 +58,9 @@ public class CidadeService {
 	@Transactional
 	public void excluir(Long id) {
 		try {
-		Optional<Cidade> ocidade = repository.findById(id);
+			repository.deleteById(id);
+			repository.flush();
 		
-		Cidade cidade = ocidade.get();
-		repository.delete(cidade);
 		}catch(NoSuchElementException e) {
 			throw new CidadeNaoEncontradaException(String.format("Não existe cadastro de cidade com o código %d", id));
 		}catch (DataIntegrityViolationException error) {

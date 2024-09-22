@@ -68,7 +68,7 @@ public class RestauranteService {
 		try {
 			
 			repository.deleteById(id);
-			
+			repository.flush();
 		}catch(NoSuchElementException e) {
 			throw new RestauranteNaoEncontradoException(String.format("Não existe cadastro de restaurante com o código %d", id));
 		}catch (DataIntegrityViolationException error) {
