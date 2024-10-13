@@ -76,6 +76,20 @@ public class RestauranteService {
 		}
 	}
 	
+	@Transactional
+	public void ativar(Long Id) {
+		Restaurante restauranteAtual = buscarOuException(Id);
+		
+		restauranteAtual.ativar();;
+	}
+	
+	@Transactional
+	public void inativar(Long Id) {
+		Restaurante restauranteAtual = buscarOuException(Id);
+		
+		restauranteAtual.inativar();;
+	}
+	
 	public Restaurante buscarOuException(Long id) {
 		return repository.findById(id)
 				.orElseThrow(() -> new RestauranteNaoEncontradoException(String.

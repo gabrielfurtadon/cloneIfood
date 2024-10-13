@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -165,6 +166,18 @@ public class RestauranteController {
 			Throwable rootCause = ExceptionUtils.getRootCause(e);
 			throw new HttpMessageNotReadableException(e.getMessage(), rootCause);
 		}
+	}
+	
+	@PutMapping("/{id}/ativar")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void ativar(@PathVariable Long id) {
+		service.ativar(id);
+	}
+	
+	@DeleteMapping("/{id}/ativar")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void inativar(@PathVariable Long id) {
+		service.inativar(id);
 	}
 	
 }
