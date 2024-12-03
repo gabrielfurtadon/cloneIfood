@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.gabriel.delivery.api.assembler.RestauranteInputDisassembler;
 import com.gabriel.delivery.domain.exception.EntidadeEmUsoException;
 import com.gabriel.delivery.domain.exception.RestauranteNaoEncontradoException;
+import com.gabriel.delivery.domain.model.Cidade;
 import com.gabriel.delivery.domain.model.Cozinha;
 import com.gabriel.delivery.domain.model.Restaurante;
 import com.gabriel.delivery.domain.repository.CozinhaRepository;
@@ -31,16 +32,26 @@ public class RestauranteService {
 	
 	@Autowired 
 	CozinhaRepository cozinhaRepository;
+	
+	@Autowired
+	CozinhaService cozinhaService;
+	
+	@Autowired
+	CidadeService cidadeService;
 
 	@Transactional
 	public Restaurante salvar(Restaurante restaurante) {
 		
 		Long cozinhaId = restaurante.getCozinha().getId();
-		Cozinha cozinha = cozinhaRepository.findById(cozinhaId)
-				.orElseThrow(() -> new RestauranteNaoEncontradoException(String.format("Não existem cozinha com o código %d associada à esse restaurante", cozinhaId)));
-
+		Long cidadeId = restaurante.getEndereco().getCidade().getId();
+		
+//		Cozinha cozinha = cozinhaRepository.findById(cozinhaId)
+//				.orElseThrow(() -> new RestauranteNaoEncontradoException(String.format("Não existem cozinha com o código %d associada à esse restaurante", cozinhaId)));
+		Cozinha cozinha = cozinhaService.buscarOuException(cozinhaId);
+		Cidade cidade = cidadeService.buscarOuException(cidadeId);
 		
 		restaurante.setCozinha(cozinha);
+		restaurante.getEndereco().setCidade(cidade);
 		
 		return repository.save(restaurante);
 	}

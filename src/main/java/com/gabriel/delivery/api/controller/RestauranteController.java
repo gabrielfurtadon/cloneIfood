@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -32,9 +30,11 @@ import com.gabriel.delivery.api.assembler.RestauranteInputDisassembler;
 import com.gabriel.delivery.api.model.RestauranteDTO;
 import com.gabriel.delivery.api.model.input.RestauranteInputDTO;
 import com.gabriel.delivery.core.validation.ValidacaoException;
+import com.gabriel.delivery.domain.exception.CidadeNaoEncontradaException;
 import com.gabriel.delivery.domain.exception.CozinhaNaoEncontradaException;
 import com.gabriel.delivery.domain.exception.EntidadeEmUsoException;
 import com.gabriel.delivery.domain.exception.EntidadeNaoEncontradaException;
+import com.gabriel.delivery.domain.exception.NegocioException;
 import com.gabriel.delivery.domain.model.Restaurante;
 import com.gabriel.delivery.domain.repository.RestauranteRepository;
 import com.gabriel.delivery.domain.service.RestauranteService;
@@ -79,18 +79,22 @@ public class RestauranteController {
 			Restaurante restaurante = restauranteInputDisassembler.toDomainObject(restauranteInput);
 			
 			return ResponseEntity.status(HttpStatus.CREATED).body(restauranteDTOAssembler.toModel(service.salvar(restaurante)));  
-		}catch(CozinhaNaoEncontradaException e) {
+		}catch(CozinhaNaoEncontradaException | CidadeNaoEncontradaException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 		
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<?> atualizar(@PathVariable Long id, @RequestBody @Valid Restaurante restaurante){
+	public RestauranteDTO atualizar(@PathVariable Long id, @RequestBody @Valid RestauranteInputDTO restaurante){
 		try {
-			return ResponseEntity.ok().body(restauranteDTOAssembler.toModel(service.atualizar(id, restaurante)));
-		}catch(CozinhaNaoEncontradaException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
+			Restaurante restauranteAtual = service.buscarOuException(id);
+			
+			restauranteInputDisassembler.copyToDomainObject(restaurante, restauranteAtual);
+			
+			return restauranteDTOAssembler.toModel(service.salvar(restauranteAtual));
+		}catch(CozinhaNaoEncontradaException | CidadeNaoEncontradaException e) {
+			throw new NegocioException(e.getMessage());
 		}
 	}
 	
@@ -107,23 +111,23 @@ public class RestauranteController {
 		}
 	}
 	
-	@PatchMapping("/{id}")
-	public ResponseEntity<?> atualizarParcial(@PathVariable Long id, @RequestBody Map<String, Object> campos) {
-		
-		Optional<Restaurante> orestauranteAtual = repository.findById(id);
-		if(orestauranteAtual.isEmpty()) {
-			return ResponseEntity.notFound().build();
-		}
-		
-		Restaurante restauranteAtual = orestauranteAtual.get();
-		
-		merge(campos, restauranteAtual);
-		
-		validate(restauranteAtual, "restaurante");
-		
-		return atualizar(id, restauranteAtual);
-		
-	}
+//	@PatchMapping("/{id}")
+//	public ResponseEntity<?> atualizarParcial(@PathVariable Long id, @RequestBody Map<String, Object> campos) {
+//		
+//		Optional<Restaurante> orestauranteAtual = repository.findById(id);
+//		if(orestauranteAtual.isEmpty()) {
+//			return ResponseEntity.notFound().build();
+//		}
+//		
+//		Restaurante restauranteAtual = orestauranteAtual.get();
+//		
+//		merge(campos, restauranteAtual);
+//		
+//		validate(restauranteAtual, "restaurante");
+//		
+//		return atualizar(id, restauranteAtual);
+//		
+//	}
 
 	
 	@GetMapping("/porTaxa")

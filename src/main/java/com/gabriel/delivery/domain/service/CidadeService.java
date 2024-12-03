@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.gabriel.delivery.domain.exception.CidadeNaoEncontradaException;
 import com.gabriel.delivery.domain.exception.EntidadeEmUsoException;
+import com.gabriel.delivery.domain.exception.RestauranteNaoEncontradoException;
 import com.gabriel.delivery.domain.model.Cidade;
 import com.gabriel.delivery.domain.model.Estado;
 import com.gabriel.delivery.domain.repository.CidadeRepository;
@@ -19,6 +20,8 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class CidadeService {
+	
+	private static final String MSG_CIDADE_NAO_ENCONTRADA = "Não existe cadastro de cidade com o código %d";
 
 	@Autowired
 	CidadeRepository repository;
@@ -67,6 +70,12 @@ public class CidadeService {
 			throw new EntidadeEmUsoException(String.format("Cidade de código %d não pode ser removido pois está em uso", id));
 		}
 		
+	}
+	
+	public Cidade buscarOuException(Long id) {
+		return repository.findById(id)
+				.orElseThrow(() -> new CidadeNaoEncontradaException(String.
+						format(MSG_CIDADE_NAO_ENCONTRADA, id)));
 	}
 	
 	

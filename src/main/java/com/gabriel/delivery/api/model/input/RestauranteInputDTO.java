@@ -18,6 +18,9 @@ public class RestauranteInputDTO {
 	private BigDecimal taxaFrete;
 	@Valid
 	@NotNull
-	private CozinhaIdInputDTO cozinhaDto;
+	private CozinhaIdInputDTO cozinha;
+	@Valid
+	@NotNull
+	private EnderecoInputDTO endereco;
 	
 }
