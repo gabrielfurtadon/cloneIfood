@@ -1,5 +1,7 @@
 package com.gabriel.delivery.domain.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,13 @@ public class UsuarioService {
 	    
 	    @Transactional
 	    public Usuario salvar(Usuario usuario) {
+	    	
+	    	Optional<Usuario> existsUser = usuarioRepository.findByEmail(usuario.getEmail());
+	    	
+	    	if(existsUser.isPresent()) {
+	    		throw new NegocioException(String.format("Já existe usuário com o email cadastrado : %s ",usuario.getEmail()));
+	    	}
+	    	
 	        return usuarioRepository.save(usuario);
 	    }
 	    

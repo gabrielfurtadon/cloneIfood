@@ -10,4 +10,7 @@ public interface CustomJpaRepository<T, ID> extends JpaRepository<T, ID>{
 
 	Optional<T> buscarPrimeiro();
 	
+	//Método criado para não precisar fazer a injecão de dependencia do entityManager direto na classe
+	void detach(T entity);
+	
 }
