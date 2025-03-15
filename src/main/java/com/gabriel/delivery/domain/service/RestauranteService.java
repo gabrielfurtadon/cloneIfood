@@ -13,6 +13,7 @@ import com.gabriel.delivery.domain.exception.EntidadeEmUsoException;
 import com.gabriel.delivery.domain.exception.RestauranteNaoEncontradoException;
 import com.gabriel.delivery.domain.model.Cidade;
 import com.gabriel.delivery.domain.model.Cozinha;
+import com.gabriel.delivery.domain.model.FormaPagamento;
 import com.gabriel.delivery.domain.model.Restaurante;
 import com.gabriel.delivery.domain.repository.CozinhaRepository;
 import com.gabriel.delivery.domain.repository.RestauranteRepository;
@@ -38,6 +39,9 @@ public class RestauranteService {
 	
 	@Autowired
 	CidadeService cidadeService;
+	
+	@Autowired
+	FormaPagamentoService formaPagamentoService;
 
 	@Transactional
 	public Restaurante salvar(Restaurante restaurante) {
@@ -99,6 +103,22 @@ public class RestauranteService {
 		Restaurante restauranteAtual = buscarOuException(Id);
 		
 		restauranteAtual.inativar();;
+	}
+	
+	@Transactional 
+	public void removerFormaPagamento(Long restauranteId, Long formaPagamentoId) {
+		Restaurante restaurante = buscarOuException(restauranteId);
+		FormaPagamento formaPagamento = formaPagamentoService.buscarOuFalhar(formaPagamentoId);
+		
+		restaurante.removerFormaPagamento(formaPagamento);
+	}
+	
+	@Transactional 
+	public void adicionarFormaPagamento(Long restauranteId, Long formaPagamentoId) {
+		Restaurante restaurante = buscarOuException(restauranteId);
+		FormaPagamento formaPagamento = formaPagamentoService.buscarOuFalhar(formaPagamentoId);
+		
+		restaurante.adicionarFormaPagamento(formaPagamento);
 	}
 	
 	public Restaurante buscarOuException(Long id) {
